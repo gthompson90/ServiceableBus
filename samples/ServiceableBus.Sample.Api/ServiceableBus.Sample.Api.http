@@ -1,0 +1,6 @@
+@ServiceableBus.Sample.Api_HostAddress = http://localhost:5116
+
+GET {{ServiceableBus.Sample.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

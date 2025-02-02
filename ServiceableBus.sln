@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35707.178
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{6E273594-0982-475E-93DE-10A0BB019DB1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{2C0CE65F-28D4-444C-A22C-23AA11C7CA64}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D4FC2380-0138-4B42-B3EF-C741FCFA0E75}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceableBus", "lib\ServiceableBus\ServiceableBus.csproj", "{04C6DDC4-E616-4FAD-A6D2-C80DAC82A51A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceableBus.Sample.Api", "samples\ServiceableBus.Sample.Api\ServiceableBus.Sample.Api.csproj", "{B2E16391-BCED-418F-8B60-C8E45A27941E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{04C6DDC4-E616-4FAD-A6D2-C80DAC82A51A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04C6DDC4-E616-4FAD-A6D2-C80DAC82A51A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04C6DDC4-E616-4FAD-A6D2-C80DAC82A51A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04C6DDC4-E616-4FAD-A6D2-C80DAC82A51A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2E16391-BCED-418F-8B60-C8E45A27941E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2E16391-BCED-418F-8B60-C8E45A27941E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2E16391-BCED-418F-8B60-C8E45A27941E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2E16391-BCED-418F-8B60-C8E45A27941E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{04C6DDC4-E616-4FAD-A6D2-C80DAC82A51A} = {2C0CE65F-28D4-444C-A22C-23AA11C7CA64}
+		{B2E16391-BCED-418F-8B60-C8E45A27941E} = {6E273594-0982-475E-93DE-10A0BB019DB1}
+	EndGlobalSection
+EndGlobal
