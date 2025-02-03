@@ -8,21 +8,19 @@ namespace ServiceableBus
     public class ServiceableBusBackgroundService : IHostedService, IAsyncDisposable
     {
         private readonly ServiceBusClient _client;
-        private readonly List<string> _queueOrTopicNames;
         private readonly List<ServiceBusProcessor> _processors;
         private readonly IServiceProvider _serviceProvider;
 
         public ServiceableBusBackgroundService(string connectionString, IServiceProvider serviceProvider)
         {
             _client = new ServiceBusClient(connectionString);
-            _queueOrTopicNames = new();
             _processors = new List<ServiceBusProcessor>();
             _serviceProvider = serviceProvider;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            var registeredHandlers = _serviceProvider.GetServices(typeof(IServiceableBusEventHandler<>));
+            var registeredHandlers = _serviceProvider.GetServices(typeof(IServiceableBusEventHandler<ServiceableBusEvent>)).ToList();
 
             var registeredHandlerTypes = registeredHandlers.Select(h => h.GetType().GetGenericArguments().First()).ToList();
 
@@ -100,11 +98,6 @@ namespace ServiceableBus
             {
                 await _client.DisposeAsync();
             }
-        }
-
-        internal void AddTopic<T>(string topicName) where T : ServiceableBusEvent
-        {
-            _queueOrTopicNames.Add(topicName);
         }
     }
 }

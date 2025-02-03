@@ -9,8 +9,8 @@ builder.Services.AddOpenApi();
 var serviceBusConfig = builder.Configuration.GetSection("ServiceableBus");
 var connectionString = serviceBusConfig["ConnectionString"] ?? throw new ArgumentNullException("ServiceableBus:ConnectionString");
 
-builder.AddServiceableBus(connectionString)
-       .RegisterServiceableBusHandler<TestEvent, TestEventServiceBusHandler>(); // Call the extension method
+builder.RegisterServiceableBusHandler<TestEvent, TestEventServiceBusHandler>()
+    .AddServiceableBus(connectionString); // Call the extension method
 
 var app = builder.Build();
 

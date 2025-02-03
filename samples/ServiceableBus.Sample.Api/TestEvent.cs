@@ -2,7 +2,7 @@
 {
     public class TestEvent : ServiceableBusEvent
     {
-        private const string Topic = "test-event-topic";
+        private const string Topic = "test-event";
 
         public TestEvent(string field1, DateTime field2, int field3)
         {
