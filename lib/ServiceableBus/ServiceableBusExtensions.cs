@@ -20,7 +20,7 @@ namespace ServiceableBus
             where T : ServiceableBusEvent
             where X : class, IServiceableBusEventHandler<T> 
         {
-            builder.Services.AddKeyedScoped<IServiceableBusEventHandler<T>, X>();
+            builder.Services.AddScoped<IServiceableBusEventHandler<T>, X>();
             return builder;
         }
 
