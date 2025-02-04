@@ -20,8 +20,7 @@ namespace ServiceableBus
             where T : ServiceableBusEvent
             where X : class, IServiceableBusEventHandler<T> 
         {
-            var key = "Service1";
-            builder.Services.AddKeyedScoped<IServiceableBusEventHandler<T>, X>(key);
+            builder.Services.AddKeyedScoped<IServiceableBusEventHandler<T>, X>();
             return builder;
         }
 
