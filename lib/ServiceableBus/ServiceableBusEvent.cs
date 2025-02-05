@@ -1,9 +1,15 @@
-﻿namespace ServiceableBus;
+﻿using System.Text.Json.Serialization;
 
-public abstract class ServiceableBusEvent
+namespace ServiceableBus;
+
+public abstract class ServiceableBusEvent<T> : IServiceableBusEvent where T : IServiceableBusPayload
 {
-    public required string TopicName { get; init; }
-    public required string MessageTypeName { get; init; }
-    public DateTime CreatedAt { get; init; }
-    public required IServiceableBusPayload Payload { get; init; }
+    [JsonPropertyName("messageTypeName")]
+    public string MessageTypeName { get; set; }
+
+    [JsonPropertyName("createdAt")]
+    public DateTime CreatedAt { get; set; }
+
+    [JsonPropertyName("payload")]
+    public T Payload { get; set; }
 }

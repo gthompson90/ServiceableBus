@@ -1,6 +1,5 @@
-﻿namespace ServiceableBus
+﻿namespace ServiceableBus;
+
+public interface IServiceableBusPayload
 {
-    public interface IServiceableBusPayload
-    {
-    }
 }

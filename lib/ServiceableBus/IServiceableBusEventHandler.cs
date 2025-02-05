@@ -1,7 +1,6 @@
-﻿namespace ServiceableBus
+﻿namespace ServiceableBus;
+
+public interface IServiceableBusEventHandler<T> where T : IServiceableBusEvent
 {
-    public interface IServiceableBusEventHandler<T> where T : ServiceableBusEvent
-    {
-        public void Handle(T @event);
-    }
+    public void Handle(T @event);
 }

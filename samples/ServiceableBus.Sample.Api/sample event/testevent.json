@@ -1,0 +1,9 @@
+{
+  "MessageTypeName": "TestEvent",
+  "CreatedAt": "2025-02-05T15:20:00.000Z",
+  "Payload": {
+    "Field1": "Test field 1",
+    "Field2": 1,
+    "Field3": 5
+  }
+}

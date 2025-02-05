@@ -1,103 +1,48 @@
-using System.Text.Json;
 using Azure.Messaging.ServiceBus;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace ServiceableBus
+namespace ServiceableBus;
+
+public class ServiceableBusBackgroundService : IHostedService, IAsyncDisposable
 {
-    public class ServiceableBusBackgroundService : IHostedService, IAsyncDisposable
+    private readonly ServiceBusClient _client;
+    private readonly IReadOnlyList<IServiceableListener> _queueListeners;
+
+    public ServiceableBusBackgroundService(IServiceableBusOptions options, IEnumerable<IServiceableListener> queueListeners)
     {
-        private readonly ServiceBusClient _client;
-        private readonly List<ServiceBusProcessor> _processors;
-        private readonly IServiceProvider _serviceProvider;
+        _client = new ServiceBusClient(options.ConnectionString);
+        _queueListeners = queueListeners.ToList();
+    }
 
-        public ServiceableBusBackgroundService(string connectionString, IServiceProvider serviceProvider)
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        foreach (var listener in _queueListeners)
         {
-            _client = new ServiceBusClient(connectionString);
-            _processors = new List<ServiceBusProcessor>();
-            _serviceProvider = serviceProvider;
+            await listener.StartProcessor(_client, cancellationToken);
+        }
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
+        foreach (var listener in _queueListeners)
+        {
+            await listener.StopProcessor(cancellationToken);
+            listener.Dispose();
+        }
+    }
+
+        
+
+    public async ValueTask DisposeAsync()
+    {
+        foreach (var listener in _queueListeners)
+        {
+            listener.Dispose();
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        if (_client != null)
         {
-            var registeredHandlers = _serviceProvider.GetServices(typeof(IServiceableBusEventHandler<ServiceableBusEvent>)).ToList();
-
-            var registeredHandlerTypes = registeredHandlers.Select(h => h.GetType().GetGenericArguments().First()).ToList();
-
-            foreach (var registeredHandlerType in registeredHandlerTypes)
-            {
-                var topicName = (string)registeredHandlerType.GetProperty("TopicName").GetValue(null);
-                var processor = _client.CreateProcessor(topicName, new ServiceBusProcessorOptions());
-                processor.ProcessMessageAsync += ProcessMessageAsync;
-                processor.ProcessErrorAsync += ProcessErrorAsync;
-                await processor.StartProcessingAsync(cancellationToken);
-                _processors.Add(processor);
-            }
-        }
-
-        public async Task StopAsync(CancellationToken cancellationToken)
-        {
-            foreach (var processor in _processors)
-            {
-                await processor.StopProcessingAsync(cancellationToken);
-                await processor.DisposeAsync();
-            }
-        }
-
-        private async Task ProcessMessageAsync(ProcessMessageEventArgs args)
-        {
-            try
-            {
-                var messageBody = args.Message.Body.ToString();
-                var eventType = args.Message.ApplicationProperties["EventType"].ToString();
-                var eventTypeInstance = Type.GetType(eventType);
-
-                if (eventTypeInstance != null)
-                {
-                    var eventInstance = JsonSerializer.Deserialize(messageBody, eventTypeInstance);
-
-                    if (eventInstance != null)
-                    {
-                        using (var scope = _serviceProvider.CreateScope())
-                        {
-                            var handlerType = typeof(IServiceableBusEventHandler<>).MakeGenericType(eventTypeInstance);
-                            var handler = scope.ServiceProvider.GetRequiredService(handlerType);
-
-                            var handleMethod = handlerType.GetMethod("Handle");
-                            if (handleMethod != null)
-                            {
-                                await (Task)handleMethod.Invoke(handler, new[] { eventInstance });
-                            }
-                        }
-                    }
-                }
-
-                await args.CompleteMessageAsync(args.Message);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error processing message: {ex.Message}");
-                await args.AbandonMessageAsync(args.Message);
-            }
-        }
-
-        private Task ProcessErrorAsync(ProcessErrorEventArgs args)
-        {
-            Console.WriteLine($"Error: {args.Exception}");
-            return Task.CompletedTask;
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            foreach (var processor in _processors)
-            {
-                await processor.DisposeAsync();
-            }
-
-            if (_client != null)
-            {
-                await _client.DisposeAsync();
-            }
+            await _client.DisposeAsync();
         }
     }
 }

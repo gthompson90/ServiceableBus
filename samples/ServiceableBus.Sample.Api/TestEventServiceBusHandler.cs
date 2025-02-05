@@ -1,10 +1,9 @@
-﻿namespace ServiceableBus.Sample.Api
+﻿namespace ServiceableBus.Sample.Api;
+
+public class TestEventServiceBusHandler : IServiceableBusEventHandler<TestEvent>
 {
-    public class TestEventServiceBusHandler : IServiceableBusEventHandler<TestEvent>
+    public void Handle(TestEvent @event)
     {
-        public void Handle(TestEvent @event)
-        {
-            Console.WriteLine($"Handling event {@event.MessageTypeName} with payload {@event.Payload}");
-        }
+        Console.WriteLine($"Handling event {@event.MessageTypeName} with payload {@event.Payload}");
     }
 }

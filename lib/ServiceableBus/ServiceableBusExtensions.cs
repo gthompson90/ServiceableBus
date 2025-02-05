@@ -1,34 +1,30 @@
-﻿using System.Reflection.Metadata.Ecma335;
-using Azure.Messaging.ServiceBus;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
-namespace ServiceableBus
+namespace ServiceableBus;
+
+public static class ServiceableBusExtensions
 {
-    public static class ServiceableBusExtensions
+    public static WebApplicationBuilder AddServiceableBus(this WebApplicationBuilder builder, string connectionString)
     {
-        public static WebApplicationBuilder AddServiceableBus(this WebApplicationBuilder builder, string connectionString)
-        {
-            builder.Services.AddHostedService(sp =>
-                new ServiceableBusBackgroundService(connectionString, sp));
+        builder.Services.AddSingleton<IServiceableBusOptions>(new ServiceableBusOptions(connectionString));
+        builder.Services.AddHostedService<ServiceableBusBackgroundService>();
 
-            return builder;
-        }
+        return builder;
+    }
 
-        public static WebApplicationBuilder RegisterServiceableBusHandler<T, X>(this WebApplicationBuilder builder)
-            where T : ServiceableBusEvent
-            where X : class, IServiceableBusEventHandler<T> 
-        {
-            builder.Services.AddScoped<IServiceableBusEventHandler<T>, X>();
-            return builder;
-        }
+    public static WebApplicationBuilder RegisterServiceableBusHandler<T, X>(this WebApplicationBuilder builder)
+        where T : IServiceableBusEvent
+        where X : class, IServiceableBusEventHandler<T> 
+    {
+        builder.Services.AddScoped<IServiceableBusEventHandler<T>, X>();
+        return builder;
+    }
 
-        //public static WebApplication AddServiceableBusTopicListener<T>(this WebApplication app, string topicName) where T : ServiceableBusEvent
-        //{
-        //    var service = app.Services.GetRequiredService<ServiceableBusBackgroundService>();
-        //    service.AddTopic<T>(topicName);
-        //    return app;
-        //}
+    public static WebApplicationBuilder AddServiceableBusTopicListener<T>(this WebApplicationBuilder builder, string queueName) where T : IServiceableBusEvent
+    {
+        builder.Services.AddSingleton<IServiceableQueueListenerOptions<T>>(sp => new ServiceableQueueListenerOptions<T>(queueName));
+        builder.Services.AddSingleton<IServiceableListener, ServiceableQueueListener<T>>();
+        return builder;
     }
 }
