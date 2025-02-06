@@ -1,4 +1,6 @@
-﻿namespace ServiceableBus.Sample.Api;
+﻿using ServiceableBus.Azure.Abstractions;
+
+namespace ServiceableBus.Sample.Api;
 
 public class TestEventServiceBusHandler : IServiceableBusEventHandler<TestEvent>
 {

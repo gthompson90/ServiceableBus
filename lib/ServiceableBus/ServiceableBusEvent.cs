@@ -1,7 +1,8 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using ServiceableBus.Azure.Abstractions;
 
-namespace ServiceableBus;
+namespace ServiceableBus.Azure;
 
 public abstract class ServiceableBusEvent<T> : IServiceableBusEvent where T : IServiceableBusPayload
 {

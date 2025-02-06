@@ -1,10 +1,11 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.DependencyInjection;
+using ServiceableBus.Azure.Abstractions;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ServiceableBus;
+namespace ServiceableBus.Azure.Listeners;
 
 internal class ServiceableQueueListener<T> : IServiceableQueueListener<T> where T : IServiceableBusEvent
 {

@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\lib\ServiceableBus\ServiceableBus.csproj" />
+    <ProjectReference Include="..\..\lib\ServiceableBus\ServiceableBus.Azure.csproj" />
   </ItemGroup>
 
 </Project>

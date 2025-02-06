@@ -1,4 +1,4 @@
-﻿namespace ServiceableBus;
+﻿namespace ServiceableBus.Azure.Abstractions;
 
 public interface IServiceableBusOptions
 {

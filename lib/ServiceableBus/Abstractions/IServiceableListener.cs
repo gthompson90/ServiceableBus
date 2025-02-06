@@ -1,6 +1,6 @@
 ﻿using Azure.Messaging.ServiceBus;
 
-namespace ServiceableBus;
+namespace ServiceableBus.Azure.Abstractions;
 
 public interface IServiceableListener : IDisposable
 {

@@ -1,16 +1,19 @@
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using ServiceableBus.Azure.Abstractions;
+using ServiceableBus.Azure.Options;
 
-namespace ServiceableBus;
+namespace ServiceableBus.Azure;
 
 public class ServiceableBusBackgroundService : IHostedService, IAsyncDisposable
 {
     private readonly ServiceBusClient _client;
     private readonly IReadOnlyList<IServiceableListener> _queueListeners;
 
-    public ServiceableBusBackgroundService(IServiceableBusOptions options, IEnumerable<IServiceableListener> queueListeners)
+    public ServiceableBusBackgroundService(IOptions<ServiceableBusOptions> options, IEnumerable<IServiceableListener> queueListeners)
     {
-        _client = new ServiceBusClient(options.ConnectionString);
+        _client = new ServiceBusClient(options.Value.ConnectionString);
         _queueListeners = queueListeners.ToList();
     }
 
@@ -30,8 +33,6 @@ public class ServiceableBusBackgroundService : IHostedService, IAsyncDisposable
             listener.Dispose();
         }
     }
-
-        
 
     public async ValueTask DisposeAsync()
     {

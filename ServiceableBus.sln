@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{2C0CE65F-28D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{D4FC2380-0138-4B42-B3EF-C741FCFA0E75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceableBus", "lib\ServiceableBus\ServiceableBus.csproj", "{04C6DDC4-E616-4FAD-A6D2-C80DAC82A51A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceableBus.Azure", "lib\ServiceableBus\ServiceableBus.Azure.csproj", "{04C6DDC4-E616-4FAD-A6D2-C80DAC82A51A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceableBus.Sample.Api", "samples\ServiceableBus.Sample.Api\ServiceableBus.Sample.Api.csproj", "{B2E16391-BCED-418F-8B60-C8E45A27941E}"
 EndProject
