@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using ServiceableBus.Azure.Abstractions;
+using ServiceableBus.Contracts;
 
 namespace ServiceableBus.Azure;
 

@@ -4,6 +4,7 @@ using ServiceableBus.Azure;
 using ServiceableBus.Azure.Abstractions;
 using ServiceableBus.Azure.Listeners;
 using ServiceableBus.Azure.Options;
+using ServiceableBus.Contracts;
 
 namespace ServiceableBus.Extensions;
 

@@ -11,6 +11,7 @@ builder.Services.AddOptions();
 //Add your Listeners and Handlers here BEFORE adding the ServiceableBus.
 builder.AddServiceableBusTopicListener<TestEvent>(TestEvent.Topic);
 builder.RegisterServiceableBusHandler<TestEvent, TestEventServiceBusHandler>();
+
 builder.AddServiceableBus();
 
 var app = builder.Build();

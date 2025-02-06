@@ -2,7 +2,7 @@
 
 namespace ServiceableBus.Azure.Options;
 
-public class ServiceableBusOptions : IServiceableBusOptions
+public class ServiceableBusOptions
 {
     public string ConnectionString { get; init; } = string.Empty;
 }

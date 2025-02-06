@@ -1,6 +1,7 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceableBus.Azure.Abstractions;
+using ServiceableBus.Contracts;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;

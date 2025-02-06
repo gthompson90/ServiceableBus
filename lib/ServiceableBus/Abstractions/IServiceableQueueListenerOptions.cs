@@ -1,4 +1,6 @@
-﻿namespace ServiceableBus.Azure.Abstractions;
+﻿using ServiceableBus.Contracts;
+
+namespace ServiceableBus.Azure.Abstractions;
 
 internal interface IServiceableQueueListenerOptions<T> where T : IServiceableBusEvent
 {

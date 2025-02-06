@@ -1,5 +1,5 @@
 ﻿using ServiceableBus.Azure;
-using ServiceableBus.Azure.Abstractions;
+using ServiceableBus.Contracts;
 
 namespace ServiceableBus.Sample.Api;
 
