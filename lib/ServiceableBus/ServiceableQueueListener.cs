@@ -42,27 +42,25 @@ internal class ServiceableQueueListener<T> : IServiceableQueueListener<T> where 
         _processor?.DisposeAsync();
     }
 
-    private async Task ProcessMessageAsync<T>(ProcessMessageEventArgs args)
+    private async Task ProcessMessageAsync<Y>(ProcessMessageEventArgs args)
     {
         try
         {
-            var eventTypeInstance = typeof(T);
+            var eventTypeInstance = typeof(Y);
 
             var options = new JsonSerializerOptions()
             {
-                IgnoreReadOnlyFields = true,
-                IgnoreReadOnlyProperties = true,
-                PropertyNameCaseInsensitive = true,
-                IncludeFields = false
+                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
+                IncludeFields = true,
+                WriteIndented = true,
+                PropertyNameCaseInsensitive = true
             };
 
-            options.Converters.Add(new JsonStringEnumConverter());
-
-            var body = Encoding.UTF8.GetString(args.Message.Body);
+            var body = Encoding.UTF8.GetString(args.Message.Body.ToArray());
 
             if (eventTypeInstance != null)
             {
-                var eventInstance = JsonSerializer.Deserialize(body, eventTypeInstance, options);
+                var eventInstance = JsonSerializer.Deserialize<Y>(body, options);
 
                 if (eventInstance != null)
                 {
@@ -74,7 +72,7 @@ internal class ServiceableQueueListener<T> : IServiceableQueueListener<T> where 
                         var handleMethod = handlerType.GetMethod("Handle");
                         if (handleMethod != null)
                         {
-                            await (Task)handleMethod.Invoke(handler, new[] { eventInstance });
+                            await (Task)handleMethod.Invoke(handler, [eventInstance])!;
                         }
                     }
                 }

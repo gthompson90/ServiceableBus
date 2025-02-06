@@ -1,6 +1,6 @@
 ﻿namespace ServiceableBus.Sample.Api;
 
-public class TestEvent : ServiceableBusEvent<IServiceableBusPayload>
+public class TestEvent : ServiceableBusEvent<TestEvent.TestEventPayload>
 {
     public const string Topic = "test-event";
 

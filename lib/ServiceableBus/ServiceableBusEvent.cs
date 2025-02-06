@@ -1,15 +1,16 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace ServiceableBus;
 
 public abstract class ServiceableBusEvent<T> : IServiceableBusEvent where T : IServiceableBusPayload
 {
-    [JsonPropertyName("messageTypeName")]
-    public string MessageTypeName { get; set; }
+    [JsonProperty("messageTypeName")]
+    public required string MessageTypeName { get; set; }
 
-    [JsonPropertyName("createdAt")]
+    [JsonProperty("createdAt")]
     public DateTime CreatedAt { get; set; }
 
-    [JsonPropertyName("payload")]
-    public T Payload { get; set; }
+    [JsonProperty("payload")]
+    public required T Payload { get; set; }
 }

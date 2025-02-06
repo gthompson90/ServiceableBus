@@ -2,8 +2,10 @@
 
 public class TestEventServiceBusHandler : IServiceableBusEventHandler<TestEvent>
 {
-    public void Handle(TestEvent @event)
+    public Task Handle(TestEvent @event)
     {
         Console.WriteLine($"Handling event {@event.MessageTypeName} with payload {@event.Payload}");
+
+        return Task.CompletedTask;
     }
 }
