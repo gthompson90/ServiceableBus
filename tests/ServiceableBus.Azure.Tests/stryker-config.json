@@ -12,7 +12,7 @@
     ],
     "mutate": [
       "!*/ServiceableBusExtensions.cs"
-    ],
+    ], 
     "thresholds": {
       "high": 80,
       "low": 60,
