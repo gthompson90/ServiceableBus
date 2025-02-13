@@ -9,6 +9,7 @@ namespace ServiceableBus.Azure.Tests
         public void TestMethod1()
         {
             var meh = true;
+            var meh2 = false;
         }
     }
 }
