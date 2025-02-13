@@ -1,7 +1,9 @@
 ﻿using ServiceableBus.Azure.Abstractions;
+using System.Diagnostics.CodeAnalysis;
 
 namespace ServiceableBus.Azure.Options;
 
+[ExcludeFromCodeCoverage]
 internal class ServiceablePublisherOptions : IServiceablePublisherOptions
 {
     public ServiceablePublisherOptions(string queueName, Type messageType)
