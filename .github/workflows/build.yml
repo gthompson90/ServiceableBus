@@ -34,11 +34,15 @@ jobs:
     - name: Run tests
       run: dotnet test --no-build --verbosity normal --configuration Release
 
-    - name: Publish NuGet package
+    - name: Pack projects in lib folder
+      if: github.ref == 'refs/heads/master'
+      run: |
+        for project in lib/**/*.csproj; do
+          dotnet pack $project --no-build --configuration Release /p:PackageVersion=${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.${{ github.run_number }}
+        done
+
+    - name: Push NuGet packages
       if: github.ref == 'refs/heads/master'
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-      run: |
-        dotnet pack --no-build --configuration Release /p:PackageVersion=${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.${{ github.run_number }}
-        dotnet nuget push **/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
-
+      run: dotnet nuget push **/*.nupkg --api-key $NUGET_API_KEY --source https://api.nuget.org/v3/index.json
