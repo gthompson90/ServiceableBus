@@ -1,6 +1,9 @@
 using ServiceableBus.Azure.Abstractions;
 using ServiceableBus.Azure.Extensions;
+using ServiceableBus.Azure.Options;
 using ServiceableBus.Sample.Api;
+
+//string appTopicSubscriptionName = "TestEventSubscription";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +13,25 @@ builder.Services.AddOpenApi();
 builder.Services.AddOptions();
 
 //Add your Listeners and Handlers here BEFORE adding the ServiceableBus.
-builder.AddServiceableBusTopicListener<TestEvent>(TestEvent.Topic);
+builder.AddServiceableBusQueueListener(() =>
+    new ServiceableQueueListenerOptions<TestEvent>()
+    { 
+        QueueName = TestEvent.Queue 
+    });
+
+//builder.AddServiceableBusTopicListener(() =>
+//    new ServiceableTopicListenerOptions<TestTopicEvent>()
+//    { 
+//        SubscriptionName =  appTopicSubscriptionName,
+//        TopicName = TestTopicEvent.Topic
+//    });
+
 builder.RegisterServiceableBusHandler<TestEvent, TestEventServiceBusHandler>();
-builder.AddServiceableBusEventSender<TestEvent>(TestEvent.Topic);
+builder.RegisterServiceableBusHandler<TestTopicEvent, TestTopicEventServiceBusHandler>();
+
+//Add your Event Senders here BEFORE adding the ServiceableBus.
+builder.AddServiceableBusEventSender<TestEvent>(TestEvent.Queue);
+builder.AddServiceableBusEventSender<TestTopicEvent>(TestTopicEvent.Topic);
 
 builder.AddServiceableBus();
 
