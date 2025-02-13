@@ -1,6 +1,6 @@
 {
   "stryker-config": {
-    "project": "ServiceableBus.Azure.Tests.csproj",
+    "project": "ServiceableBus.Azure.csproj",
     "report-file-name": "ServiceableBus.Azure",
     "reporters": [
       "html",
