@@ -86,6 +86,45 @@ app.Run();
 ```
 dotnet run
 ```
+
+3. Adding a Sender for TestEvent and sending a message:
+```
+using ServiceableBus.Extensions;
+using ServiceableBus.Sample.Api;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddOpenApi();
+
+// Adding options is required for the ServiceableBus configuration.
+builder.Services.AddOptions();
+
+// Add your Listeners, Handlers and Senders here BEFORE adding the ServiceableBus.
+builder.AddServiceableBusTopicListener<TestEvent>(TestEvent.Topic);
+builder.RegisterServiceableBusHandler<TestEvent, TestEventServiceBusHandler>();
+builder.AddServiceableBusEventSender<TestEvent>(TestEvent.Topic);
+
+builder.AddServiceableBus();
+
+var app = builder.Build();
+
+//Test fire the sender by getting the IServiceableBusPublisher and calling PublishAsync.
+var sender = app.Services.GetService<IServiceableBusPublisher>();
+
+await sender.PublishAsync(new TestEvent 
+{ 
+    MessageTypeName = "TestEvent",
+    Payload = new TestEvent.TestEventPayload("Test", 1, 4) 
+});
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
+
+app.Run();
+```
 ## Additional Information
 
 - Ensure that your Azure Service Bus connection string and other settings are correctly configured in the `appsettings.json` file.

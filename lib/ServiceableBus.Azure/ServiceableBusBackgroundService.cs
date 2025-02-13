@@ -11,7 +11,9 @@ public class ServiceableBusBackgroundService : IHostedService, IAsyncDisposable
     private readonly ServiceBusClient _client;
     private readonly IReadOnlyList<IServiceableListener> _queueListeners;
 
-    public ServiceableBusBackgroundService(IOptions<ServiceableBusOptions> options, IEnumerable<IServiceableListener> queueListeners)
+    public ServiceableBusBackgroundService(
+        IOptions<ServiceableBusOptions> options, 
+        IEnumerable<IServiceableListener> queueListeners)
     {
         _client = new ServiceBusClient(options.Value.ConnectionString);
         _queueListeners = queueListeners.ToList();

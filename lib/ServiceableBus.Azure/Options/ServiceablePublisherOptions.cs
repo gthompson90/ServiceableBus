@@ -1,16 +1,17 @@
 ﻿using ServiceableBus.Azure.Abstractions;
-using ServiceableBus.Contracts;
 using System.Diagnostics.CodeAnalysis;
 
 namespace ServiceableBus.Azure.Options;
 
 [ExcludeFromCodeCoverage]
-internal class ServiceableQueueListenerOptions<T> : IServiceableQueueListenerOptions<T> where T : IServiceableBusEvent
+internal class ServiceablePublisherOptions : IServiceablePublisherOptions
 {
-    public ServiceableQueueListenerOptions(string queueName)
+    public ServiceablePublisherOptions(string queueName, Type messageType)
     {
         QueueName = queueName;
+        MessageType = messageType;
     }
 
     public string QueueName { get; init; }
+    public Type MessageType { get; init; }
 }
