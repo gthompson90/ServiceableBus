@@ -20,11 +20,12 @@ internal class ServiceablePublisher : IServiceablePublisher
 
     public async Task PublishAsync<T>(T message) where T : IServiceableBusEvent
     {
-        var sender = _clientFactory.CreateSender(_options.First(x => x.MessageType == typeof(T)));
-        if (sender is null)
-        {
-            throw new InvalidOperationException("Sender is null");
-        }
+        var messageOptions = _options.FirstOrDefault(x => x.MessageType == typeof(T));
+
+        if (messageOptions is null)
+            throw new InvalidOperationException($"No publisher options found for message type {typeof(T).Name}.");
+
+        var sender = _clientFactory.CreateSender(messageOptions);
 
         if (sender is null)
             throw new InvalidOperationException("Sender has not been initialised.");
@@ -39,6 +40,6 @@ internal class ServiceablePublisher : IServiceablePublisher
 
         var eventInstance = JsonSerializer.Serialize(message, options);
 
-        await sender.SendMessageAsync(new ServiceBusMessage(Encoding.UTF8.GetBytes(eventInstance ?? throw new ArgumentNullException(nameof(message)))));
+        await sender.SendMessageAsync(new ServiceBusMessage(Encoding.UTF8.GetBytes(eventInstance!)));
     }
 }

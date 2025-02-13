@@ -18,6 +18,9 @@ internal class ServiceableBusClientFactory : IServiceableBusClientFactory
 
     public ServiceBusSender CreateSender(IServiceablePublisherOptions options)
     {
+        if (options is null)
+            throw new ArgumentNullException(nameof(options));
+
         var sender = _client.CreateSender(options.QueueName);
         return sender;
     }
