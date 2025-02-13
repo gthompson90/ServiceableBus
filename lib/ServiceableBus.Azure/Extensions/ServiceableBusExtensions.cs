@@ -12,6 +12,8 @@ public static class ServiceableBusExtensions
     public static WebApplicationBuilder AddServiceableBus(this WebApplicationBuilder builder)
     {
         builder.Services.Configure<ServiceableBusOptions>(builder.Configuration.GetSection("ServiceableBus"));
+        builder.Services.AddSingleton<IServiceableBusClientFactory, ServiceableBusClientFactory>();
+        builder.Services.AddSingleton<IServiceableBusPublisher, ServiceableBusPublisher>();
         builder.Services.AddHostedService<ServiceableBusBackgroundService>();
 
         return builder;
@@ -30,6 +32,13 @@ public static class ServiceableBusExtensions
     {
         builder.Services.AddSingleton<IServiceableQueueListenerOptions<T>>(sp => new ServiceableQueueListenerOptions<T>(queueName));
         builder.Services.AddSingleton<IServiceableListener, ServiceableQueueListener<T>>();
+        return builder;
+    }
+
+    public static WebApplicationBuilder AddServiceableBusEventSender<T>(this WebApplicationBuilder builder, string queueName)
+        where T : IServiceableBusEvent
+    {
+        builder.Services.AddSingleton<IServiceablePublisherOptions>(sp => new ServiceablePublisherOptions(queueName, typeof(T)));
         return builder;
     }
 }

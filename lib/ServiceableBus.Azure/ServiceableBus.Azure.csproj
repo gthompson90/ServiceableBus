@@ -25,4 +25,8 @@
     <ProjectReference Include="..\ServiceableBus.Contracts\ServiceableBus.Contracts.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Senders\" />
+  </ItemGroup>
+
 </Project>
