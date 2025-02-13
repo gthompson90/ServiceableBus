@@ -18,7 +18,7 @@ builder.AddServiceableBus();
 
 var app = builder.Build();
 
-var sender = app.Services.GetService<IServiceableBusPublisher>();
+var sender = app.Services.GetService<IServiceablePublisher>();
 
 await sender.PublishAsync(new TestEvent 
 { 

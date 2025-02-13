@@ -1,5 +1,4 @@
 ﻿using ServiceableBus.Azure.Abstractions;
-using ServiceableBus.Contracts;
 
 namespace ServiceableBus.Azure.Options;
 

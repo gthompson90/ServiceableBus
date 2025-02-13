@@ -13,7 +13,7 @@ public static class ServiceableBusExtensions
     {
         builder.Services.Configure<ServiceableBusOptions>(builder.Configuration.GetSection("ServiceableBus"));
         builder.Services.AddSingleton<IServiceableBusClientFactory, ServiceableBusClientFactory>();
-        builder.Services.AddSingleton<IServiceableBusPublisher, ServiceableBusPublisher>();
+        builder.Services.AddSingleton<IServiceablePublisher, ServiceablePublisher>();
         builder.Services.AddHostedService<ServiceableBusBackgroundService>();
 
         return builder;

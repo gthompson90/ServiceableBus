@@ -1,6 +1,4 @@
-﻿using ServiceableBus.Contracts;
-
-namespace ServiceableBus.Azure.Abstractions;
+﻿namespace ServiceableBus.Azure.Abstractions;
 
 public interface IServiceablePublisherOptions
 {

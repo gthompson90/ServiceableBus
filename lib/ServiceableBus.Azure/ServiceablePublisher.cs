@@ -7,12 +7,12 @@ using System.Text.Json.Serialization;
 
 namespace ServiceableBus.Azure;
 
-internal class ServiceableBusPublisher : IServiceableBusPublisher
+internal class ServiceablePublisher : IServiceablePublisher
 {
     private readonly IServiceableBusClientFactory _clientFactory;
     private readonly IEnumerable<IServiceablePublisherOptions> _options;
 
-    public ServiceableBusPublisher(IServiceableBusClientFactory clientFactory, IEnumerable<IServiceablePublisherOptions> options)
+    public ServiceablePublisher(IServiceableBusClientFactory clientFactory, IEnumerable<IServiceablePublisherOptions> options)
     {
         _clientFactory = clientFactory;
         _options = options;
