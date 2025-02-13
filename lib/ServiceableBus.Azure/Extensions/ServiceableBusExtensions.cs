@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using ServiceableBus.Azure;
 using ServiceableBus.Azure.Abstractions;
 using ServiceableBus.Azure.Listeners;
 using ServiceableBus.Azure.Options;
 using ServiceableBus.Contracts;
 
-namespace ServiceableBus.Extensions;
+namespace ServiceableBus.Azure.Extensions;
 
 public static class ServiceableBusExtensions
 {

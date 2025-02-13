@@ -1,4 +1,4 @@
-using ServiceableBus.Extensions;
+using ServiceableBus.Azure.Extensions;
 using ServiceableBus.Sample.Api;
 
 var builder = WebApplication.CreateBuilder(args);

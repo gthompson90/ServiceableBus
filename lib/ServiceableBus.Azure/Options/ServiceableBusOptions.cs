@@ -1,6 +1,4 @@
-﻿using ServiceableBus.Azure.Abstractions;
-
-namespace ServiceableBus.Azure.Options;
+﻿namespace ServiceableBus.Azure.Options;
 
 public class ServiceableBusOptions
 {
