@@ -8,10 +8,10 @@ internal class ServiceablePublisherOptions : IServiceablePublisherOptions
 {
     public ServiceablePublisherOptions(string queueName, Type messageType)
     {
-        QueueName = queueName;
+        QueueOrTopicName = queueName;
         MessageType = messageType;
     }
 
-    public string QueueName { get; init; }
+    public string QueueOrTopicName { get; init; }
     public Type MessageType { get; init; }
 }

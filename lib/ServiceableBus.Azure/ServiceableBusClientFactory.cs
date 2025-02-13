@@ -21,7 +21,7 @@ internal class ServiceableBusClientFactory : IServiceableBusClientFactory
         if (options is null)
             throw new ArgumentNullException(nameof(options));
 
-        var sender = _client.CreateSender(options.QueueName);
+        var sender = _client.CreateSender(options.QueueOrTopicName);
         return sender;
     }
 }
