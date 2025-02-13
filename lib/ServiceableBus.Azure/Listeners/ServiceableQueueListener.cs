@@ -44,7 +44,7 @@ internal class ServiceableQueueListener<T> : IServiceableQueueListener<T> where 
         _processor?.DisposeAsync();
     }
 
-    private async Task ProcessMessageAsync<Y>(ProcessMessageEventArgs args)
+    internal async Task ProcessMessageAsync<Y>(ProcessMessageEventArgs args)
     {
         try
         {
