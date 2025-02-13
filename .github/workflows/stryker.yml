@@ -26,6 +26,7 @@ jobs:
       run: dotnet stryker -f stryker-config.json
 
     - name: Upload Stryker Report
+      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: stryker-report
