@@ -1,9 +1,6 @@
 name: Stryker Mutation Testing
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
       - master
