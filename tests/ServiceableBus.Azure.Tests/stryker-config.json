@@ -2,7 +2,6 @@
   "stryker-config": {
     "project": "ServiceableBus.Azure.csproj",
     "report-file-name": "ServiceableBus.Azure",
-    "output": "reports",
     "reporters": [
       "html",
       "cleartext"
