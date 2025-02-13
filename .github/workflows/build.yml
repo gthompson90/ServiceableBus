@@ -36,8 +36,6 @@ jobs:
 
     - name: Pack projects in lib folder
       if: github.ref == 'refs/heads/master'
-      env:
-        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
       run: |
         for project in lib/**/*.csproj; do
           dotnet pack $project --no-build --configuration Release /p:PackageVersion=${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.${{ github.run_number }}
