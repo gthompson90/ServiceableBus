@@ -4,6 +4,10 @@
 	  <TargetFramework>net9.0</TargetFramework>
 	  <Nullable>enable</Nullable>
 	  <ImplicitUsings>enable</ImplicitUsings>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/gthompson90/ServiceableBus</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/gthompson90/ServiceableBus</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
