@@ -66,9 +66,22 @@ builder.Services.AddOpenApi();
 // Adding options is required for the ServiceableBus configuration.
 builder.Services.AddOptions();
 
-// Add your Listeners and Handlers here BEFORE adding the ServiceableBus.
-builder.AddServiceableBusTopicListener<TestEvent>(TestEvent.Topic);
+//Add your Listeners and Handlers here BEFORE adding the ServiceableBus.
+builder.AddServiceableBusQueueListener(() =>
+    new ServiceableQueueListenerOptions<TestEvent>()
+    { 
+        QueueName = TestEvent.Queue 
+    });
+
+builder.AddServiceableBusTopicListener(() =>
+    new ServiceableTopicListenerOptions<TestTopicEvent>()
+    { 
+        SubscriptionName =  appTopicSubscriptionName,
+        TopicName = TestTopicEvent.Topic
+    });
+
 builder.RegisterServiceableBusHandler<TestEvent, TestEventServiceBusHandler>();
+builder.RegisterServiceableBusHandler<TestTopicEvent, TestTopicEventServiceBusHandler>();
 
 builder.AddServiceableBus();
 
@@ -100,8 +113,14 @@ builder.Services.AddOpenApi();
 builder.Services.AddOptions();
 
 // Add your Listeners, Handlers and Senders here BEFORE adding the ServiceableBus.
-builder.AddServiceableBusTopicListener<TestEvent>(TestEvent.Topic);
+builder.AddServiceableBusQueueListener(() =>
+    new ServiceableQueueListenerOptions<TestEvent>()
+    { 
+        QueueName = TestEvent.Queue 
+    });
+
 builder.RegisterServiceableBusHandler<TestEvent, TestEventServiceBusHandler>();
+
 builder.AddServiceableBusEventSender<TestEvent>(TestEvent.Topic);
 
 builder.AddServiceableBus();

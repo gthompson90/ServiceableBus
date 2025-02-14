@@ -27,11 +27,20 @@ public static class ServiceableBusExtensions
         return builder;
     }
 
-    public static WebApplicationBuilder AddServiceableBusTopicListener<T>(this WebApplicationBuilder builder, string queueName)
+    public static WebApplicationBuilder AddServiceableBusQueueListener<T>(this WebApplicationBuilder builder, Func<ServiceableQueueListenerOptions<T>> action)
         where T : IServiceableBusEvent
     {
-        builder.Services.AddSingleton<IServiceableQueueListenerOptions<T>>(sp => new ServiceableQueueListenerOptions<T>(queueName));
+        builder.Services.AddSingleton<IServiceableQueueListenerOptions<T>>(action.Invoke());
         builder.Services.AddSingleton<IServiceableListener, ServiceableQueueListener<T>>();
+        return builder;
+    }
+
+
+    public static WebApplicationBuilder AddServiceableBusTopicListener<T>(this WebApplicationBuilder builder, Func<ServiceableTopicListenerOptions<T>> action)
+        where T : IServiceableBusEvent
+    {
+        builder.Services.AddSingleton<IServiceableTopicListenerOptions<T>>(action.Invoke());
+        builder.Services.AddSingleton<IServiceableListener, ServiceableTopicListener<T>>();
         return builder;
     }
 

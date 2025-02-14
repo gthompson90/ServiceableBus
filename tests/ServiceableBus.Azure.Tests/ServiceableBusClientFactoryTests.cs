@@ -32,7 +32,7 @@ namespace ServiceableBus.Azure.Tests
         {
             // Arrange
             var mockPublisherOptions = Substitute.For<IServiceablePublisherOptions>();
-            mockPublisherOptions.QueueName.Returns("test-queue");
+            mockPublisherOptions.QueueOrTopicName.Returns("test-queue");
 
             // Act
             var sender = _clientFactory.CreateSender(mockPublisherOptions);
