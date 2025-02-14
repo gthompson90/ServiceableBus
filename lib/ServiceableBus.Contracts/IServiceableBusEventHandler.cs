@@ -2,5 +2,5 @@
 
 public interface IServiceableBusEventHandler<T> where T : IServiceableBusEvent
 {
-    public Task Handle(T @event);
+    public Task Handle(T @event, ServiceablePropertyBag properties);
 }

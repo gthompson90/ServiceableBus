@@ -18,7 +18,7 @@ internal class ServiceablePublisher : IServiceablePublisher
         _options = options;
     }
 
-    public async Task PublishAsync<T>(T message) where T : IServiceableBusEvent
+    public async Task PublishAsync<T>(T message, Func<ServiceablePropertyBag>? action = null) where T : IServiceableBusEvent
     {
         var messageOptions = _options.FirstOrDefault(x => x.MessageType == typeof(T));
 
@@ -40,6 +40,20 @@ internal class ServiceablePublisher : IServiceablePublisher
 
         var eventInstance = JsonSerializer.Serialize(message, options);
 
-        await sender.SendMessageAsync(new ServiceBusMessage(Encoding.UTF8.GetBytes(eventInstance!)));
+        var sbMessage = new ServiceBusMessage()
+        {
+            Body = new BinaryData(Encoding.UTF8.GetBytes(eventInstance!)),
+            ContentType = "application/json",
+            CorrelationId = Guid.NewGuid().ToString(),
+        };
+
+        if (action is not null) { 
+            foreach (var (key, value) in action.Invoke().ToDictionary())
+            {
+                sbMessage.ApplicationProperties.Add(key, value);
+            }
+        }
+
+        await sender.SendMessageAsync(sbMessage);
     }
 }

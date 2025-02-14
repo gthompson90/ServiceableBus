@@ -10,7 +10,7 @@ public abstract class ServiceableBusEvent<T> : IServiceableBusEvent where T : IS
     public required string MessageTypeName { get; set; }
 
     [JsonProperty("createdAt")]
-    public DateTime CreatedAt { get; set; }
+    public required DateTime CreatedAt { get; set; }
 
     [JsonProperty("payload")]
     public required T Payload { get; set; }

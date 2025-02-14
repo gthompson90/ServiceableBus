@@ -4,5 +4,5 @@ namespace ServiceableBus.Azure.Abstractions;
 
 public interface IServiceablePublisher
 {
-    public Task PublishAsync<T>(T message) where T : IServiceableBusEvent;
+    public Task PublishAsync<T>(T message, Func<ServiceablePropertyBag> action) where T : IServiceableBusEvent;
 };
