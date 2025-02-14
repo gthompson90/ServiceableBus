@@ -71,10 +71,12 @@ internal class ServiceableQueueListener<T> : IServiceableQueueListener<T> where 
                         var handlerType = typeof(IServiceableBusEventHandler<>).MakeGenericType(eventTypeInstance);
                         var handler = scope.ServiceProvider.GetRequiredService(handlerType);
 
+                        var properties = new ServiceablePropertyBag { _properties = args.Message.ApplicationProperties.Select(x => (x.Key, x.Value)).ToArray() };
+
                         var handleMethod = handlerType.GetMethod("Handle");
                         if (handleMethod != null)
                         {
-                            await (Task)handleMethod.Invoke(handler, [eventInstance])!;
+                            await (Task)handleMethod.Invoke(handler, [eventInstance, properties])!;
                         }
                     }
                 }

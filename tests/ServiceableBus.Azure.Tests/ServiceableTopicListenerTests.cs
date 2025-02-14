@@ -101,7 +101,7 @@ namespace ServiceableBus.Azure.Tests
             await _listener.ProcessMessageAsync<TestEvent>(processArgs);
 
             // Assert
-            await mockEventHandler.Received(1).Handle(Arg.Is<TestEvent>(e => e.Property == "Test"));;
+            await mockEventHandler.Received(1).Handle(Arg.Is<TestEvent>(e => e.Property == "Test"), Arg.Any<ServiceablePropertyBag>());
         }
 
         [TestMethod]

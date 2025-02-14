@@ -1,6 +1,7 @@
 using ServiceableBus.Azure.Abstractions;
 using ServiceableBus.Azure.Extensions;
 using ServiceableBus.Azure.Options;
+using ServiceableBus.Contracts;
 using ServiceableBus.Sample.Api;
 
 //string appTopicSubscriptionName = "TestEventSubscription";
@@ -15,8 +16,8 @@ builder.Services.AddOptions();
 //Add your Listeners and Handlers here BEFORE adding the ServiceableBus.
 builder.AddServiceableBusQueueListener(() =>
     new ServiceableQueueListenerOptions<TestEvent>()
-    { 
-        QueueName = TestEvent.Queue 
+    {
+        QueueName = TestEvent.Queue
     });
 
 //builder.AddServiceableBusTopicListener(() =>
@@ -39,11 +40,16 @@ var app = builder.Build();
 
 var sender = app.Services.GetService<IServiceablePublisher>();
 
-await sender.PublishAsync(new TestEvent 
-{ 
-    MessageTypeName = "TestEvent",
-    Payload = new TestEvent.TestEventPayload("Test", 1, 4) 
-});
+//await sender.PublishAsync(new TestEvent 
+//{ 
+//    MessageTypeName = "TestEvent",
+//    Payload = new TestEvent.TestEventPayload("Test", 1, 4),
+//    CreatedAt = DateTime.UtcNow
+//}, 
+//() => new ServiceablePropertyBag 
+//{ 
+//    _properties = [("AppName", "TestApp"), ("AnotherProperty", "WhateverValueYouLike")] 
+//});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
