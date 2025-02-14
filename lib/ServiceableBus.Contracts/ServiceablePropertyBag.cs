@@ -2,10 +2,10 @@
 
 public class ServiceablePropertyBag
 {
-    public required (string, object)[] _properties { get; init; }
+    public required (string Key, object Value)[] Properties { get; init; }
 
     public Dictionary<string, object> ToDictionary()
     {
-        return _properties.ToDictionary();
+        return Properties.ToDictionary();
     }
 }

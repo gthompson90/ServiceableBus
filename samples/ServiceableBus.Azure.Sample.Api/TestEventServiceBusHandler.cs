@@ -8,9 +8,9 @@ public class TestEventServiceBusHandler : IServiceableBusEventHandler<TestEvent>
     {
         Console.WriteLine($"Handling event {@event.MessageTypeName} with payload {@event.Payload}");
 
-        foreach (var property in properties._properties)
+        foreach (var property in properties.Properties)
         {
-            Console.WriteLine($"Property: {property.Item1} = {property.Item2}");
+            Console.WriteLine($"Property: {property.Key} = {property.Value}");
         }
 
         return Task.CompletedTask;

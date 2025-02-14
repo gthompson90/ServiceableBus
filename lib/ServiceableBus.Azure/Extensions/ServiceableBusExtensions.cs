@@ -44,10 +44,10 @@ public static class ServiceableBusExtensions
         return builder;
     }
 
-    public static WebApplicationBuilder AddServiceableBusEventSender<T>(this WebApplicationBuilder builder, string queueName)
+    public static WebApplicationBuilder AddServiceableBusEventSender<T>(this WebApplicationBuilder builder, string queueOrTopicName)
         where T : IServiceableBusEvent
     {
-        builder.Services.AddSingleton<IServiceablePublisherOptions>(sp => new ServiceablePublisherOptions(queueName, typeof(T)));
+        builder.Services.AddSingleton<IServiceablePublisherOptions>(sp => new ServiceablePublisherOptions(queueOrTopicName, typeof(T)));
         return builder;
     }
 }

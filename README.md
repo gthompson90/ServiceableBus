@@ -144,6 +144,28 @@ if (app.Environment.IsDevelopment())
 
 app.Run();
 ```
+
+
+## ServiceablePropertyBag
+
+The `ServiceablePropertyBag` class is used to store and manage a collection of key-value pairs. It provides a convenient way to pass additional properties along with your events.
+
+### Example Usage
+
+1. Define a `ServiceablePropertyBag` with properties:
+```
+var propertyBag = new ServiceablePropertyBag { Properties =[("Property1", "Value1"), ("Property2", 123), ("Property3", true)]};
+```
+2. Use the `ServiceablePropertyBag` when publishing an event:
+```
+await sender.PublishAsync(new TestEvent 
+{ 
+    MessageTypeName = "TestEvent", 
+    Payload = new TestEvent.TestEventPayload("Test", 1, 4) 
+},
+() => propertyBag);
+```
+
 ## Additional Information
 
 - Ensure that your Azure Service Bus connection string and other settings are correctly configured in the `appsettings.json` file.
