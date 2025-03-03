@@ -14,6 +14,7 @@ namespace ServiceableBus.Azure.Tests
     {
         private IServiceProvider _mockServiceProvider;
         private IServiceableTopicListenerOptions<TestEvent> _mockOptions;
+        private IServiceableRetryOptions _mockRetryOptions;
         private ServiceBusClient _mockClient;
         private ServiceableTopicListener<TestEvent> _listener;
         private ServiceBusReceiver _mockReceiver;
@@ -25,11 +26,12 @@ namespace ServiceableBus.Azure.Tests
             _mockOptions = Substitute.For<IServiceableTopicListenerOptions<TestEvent>>();
             _mockClient = Substitute.For<ServiceBusClient>();
             _mockReceiver = Substitute.For<ServiceBusReceiver>();
+            _mockRetryOptions = Substitute.For<IServiceableRetryOptions>();
 
             _mockOptions.TopicName.Returns("test-queue");
             _mockOptions.SubscriptionName.Returns("test-sub");
 
-            _listener = new ServiceableTopicListener<TestEvent>(_mockServiceProvider, _mockOptions);
+            _listener = new ServiceableTopicListener<TestEvent>(_mockServiceProvider, _mockOptions, _mockRetryOptions);
         }
 
         [TestMethod]
