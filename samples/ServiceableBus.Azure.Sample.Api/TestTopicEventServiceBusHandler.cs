@@ -1,10 +1,11 @@
-﻿using ServiceableBus.Contracts;
+﻿using ServiceableBus.Azure.Dtos;
+using ServiceableBus.Contracts;
 
 namespace ServiceableBus.Sample.Api;
 
 public class TestTopicEventServiceBusHandler : IServiceableBusEventHandler<TestTopicEvent>
 {
-    public Task Handle(TestTopicEvent @event, ServiceablePropertyBag properties)
+    public Task<IServiceableResult> Handle(TestTopicEvent @event, ServiceablePropertyBag properties)
     {
         Console.WriteLine($"Handling event {@event.MessageTypeName} with payload {@event.Payload}");
 
@@ -13,6 +14,6 @@ public class TestTopicEventServiceBusHandler : IServiceableBusEventHandler<TestT
             Console.WriteLine($"Property: {property.Key} = {property.Value}");
         }
 
-        return Task.CompletedTask;
+        return new Task<IServiceableResult>(() => new Complete());
     }
 }

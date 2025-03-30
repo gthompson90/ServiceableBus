@@ -1,6 +1,7 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceableBus.Azure.Abstractions;
+using ServiceableBus.Azure.Dtos;
 using ServiceableBus.Contracts;
 using System.Text;
 using System.Text.Json;
@@ -76,7 +77,23 @@ internal class ServiceableQueueListener<T> : IServiceableQueueListener<T> where 
                         var handleMethod = handlerType.GetMethod("Handle");
                         if (handleMethod != null)
                         {
-                            await (Task)handleMethod.Invoke(handler, [eventInstance, properties])!;
+                            IServiceableResult result = await (Task<IServiceableResult>)handleMethod.Invoke(handler, [eventInstance, properties])!;
+                            switch (result)
+                            {
+                                case Complete:
+                                    await args.CompleteMessageAsync(args.Message);
+                                    break;
+                                case Abandon:
+                                    await args.AbandonMessageAsync(args.Message);
+                                    break;
+                                //TO DO, DEFERRAL NOTIFICATIONS
+                                //case Defer defer:
+                                //    await args.DeferMessageAsync(args.Message);
+                                //    break;
+                                case DeadLetter:
+                                    await args.DeadLetterMessageAsync(args.Message);
+                                    break;
+                            }
                         }
                     }
                 }
