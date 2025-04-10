@@ -1,8 +1,8 @@
 ﻿using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.DependencyInjection;
 using ServiceableBus.Azure.Abstractions;
-using ServiceableBus.Azure.Dtos;
 using ServiceableBus.Contracts;
+using ServiceableBus.Contracts.Results;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -15,7 +15,9 @@ internal class ServiceableTopicListener<T> : IServiceableTopicListener<T> where 
     private ServiceBusProcessor? _processor = null;
     private readonly IServiceableTopicListenerOptions<T> _options;
 
-    public ServiceableTopicListener(IServiceProvider serviceProvider, IServiceableTopicListenerOptions<T> options)
+    public ServiceableTopicListener(
+        IServiceProvider serviceProvider, 
+        IServiceableTopicListenerOptions<T> options)
     {
         _options = options;
         _serviceProvider = serviceProvider;
@@ -23,9 +25,10 @@ internal class ServiceableTopicListener<T> : IServiceableTopicListener<T> where 
 
     public Type EventType { get => typeof(T); }
 
-    public void Dispose()
+    public ValueTask DisposeAsync()
     {
         _processor?.DisposeAsync();
+        return ValueTask.CompletedTask;
     }
 
     public async Task StartProcessor(ServiceBusClient client, CancellationToken cancellationToken)
@@ -45,7 +48,7 @@ internal class ServiceableTopicListener<T> : IServiceableTopicListener<T> where 
         _processor?.DisposeAsync();
     }
 
-    internal async Task ProcessMessageAsync<Y>(ProcessMessageEventArgs args)
+    internal async Task ProcessMessageAsync<Y>(ProcessMessageEventArgs args) where Y : IServiceableBusEvent
     {
         try
         {
@@ -86,10 +89,9 @@ internal class ServiceableTopicListener<T> : IServiceableTopicListener<T> where 
                                 case Abandon:
                                     await args.AbandonMessageAsync(args.Message);
                                     break;
-                                //TO DO, DEFERRAL NOTIFICATIONS
-                                //case Defer defer:
-                                //    await args.DeferMessageAsync(args.Message);
-                                //    break;
+                                case Defer defer:
+                                    await ProcessDeferralAsync<Y>(args, defer.durationInMinutes);
+                                    break;
                                 case DeadLetter:
                                     await args.DeadLetterMessageAsync(args.Message);
                                     break;
@@ -98,8 +100,6 @@ internal class ServiceableTopicListener<T> : IServiceableTopicListener<T> where 
                     }
                 }
             }
-
-            await args.CompleteMessageAsync(args.Message);
         }
         catch (Exception ex)
         {
@@ -112,5 +112,12 @@ internal class ServiceableTopicListener<T> : IServiceableTopicListener<T> where 
     {
         Console.WriteLine($"Error: {args.Exception}");
         return Task.CompletedTask;
+    }
+
+    private async Task ProcessDeferralAsync<X>(ProcessMessageEventArgs args, int deferralInMinutes) where X : IServiceableBusEvent
+    {
+        var deferralPublisher = _serviceProvider.GetRequiredService<IServiceableDeferralNotificationPublisher>();
+        await deferralPublisher.PublishDeferralNotification(args.Message.SequenceNumber, deferralInMinutes, _options.TopicName, typeof(X));
+        await args.DeferMessageAsync(args.Message);
     }
 }

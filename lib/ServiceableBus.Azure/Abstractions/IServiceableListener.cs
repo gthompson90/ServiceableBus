@@ -2,7 +2,7 @@
 
 namespace ServiceableBus.Azure.Abstractions;
 
-public interface IServiceableListener : IDisposable
+public interface IServiceableListener : IAsyncDisposable
 {
     public Type EventType { get; }
     public Task StartProcessor(ServiceBusClient client, CancellationToken cancellationToken);

@@ -1,4 +1,5 @@
 using Azure.Messaging.ServiceBus;
+using Microsoft.Extensions.Options;
 using NSubstitute;
 using ServiceableBus.Azure.Abstractions;
 using ServiceableBus.Azure.Options;
@@ -11,7 +12,8 @@ namespace ServiceableBus.Azure.Tests
     {
         private IServiceableBusClientFactory _mockClientFactory;
         private ServiceBusSender _mockSender;
-        private List<IServiceablePublisherOptions> _options;
+        private List<IServiceablePublisherOptions> _publisherOptions;
+        private IOptions<ServiceableBusOptions> _serviceableBusOptions;
         private ServiceablePublisher _publisher;
 
         [TestInitialize]
@@ -19,14 +21,15 @@ namespace ServiceableBus.Azure.Tests
         {
             _mockClientFactory = Substitute.For<IServiceableBusClientFactory>();
             _mockSender = Substitute.For<ServiceBusSender>();
-            _options = new List<IServiceablePublisherOptions>
+            _publisherOptions = new List<IServiceablePublisherOptions>
             {
                 new ServiceablePublisherOptions("test-queue", typeof(TestEvent))
             };
+            _serviceableBusOptions = Substitute.For<IOptions<ServiceableBusOptions>>();
 
             _mockClientFactory.CreateSender(Arg.Any<IServiceablePublisherOptions>()).Returns(_mockSender);
 
-            _publisher = new ServiceablePublisher(_mockClientFactory, _options);
+            _publisher = new ServiceablePublisher(_mockClientFactory, _publisherOptions, _serviceableBusOptions);
         }
 
         [TestMethod]

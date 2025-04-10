@@ -1,4 +1,6 @@
-﻿namespace ServiceableBus.Contracts;
+﻿using ServiceableBus.Contracts.Results;
+
+namespace ServiceableBus.Contracts;
 
 public interface IServiceableBusEventHandler<T> where T : IServiceableBusEvent
 {

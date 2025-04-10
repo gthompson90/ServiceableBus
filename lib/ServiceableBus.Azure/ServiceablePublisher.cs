@@ -1,5 +1,7 @@
 ﻿using Azure.Messaging.ServiceBus;
+using Microsoft.Extensions.Options;
 using ServiceableBus.Azure.Abstractions;
+using ServiceableBus.Azure.Options;
 using ServiceableBus.Contracts;
 using System.Text;
 using System.Text.Json;
@@ -9,18 +11,25 @@ namespace ServiceableBus.Azure;
 
 internal class ServiceablePublisher : IServiceablePublisher
 {
-    private readonly IServiceableBusClientFactory _clientFactory;
-    private readonly IEnumerable<IServiceablePublisherOptions> _options;
+    private const string DeferralMessageTypename = "ServiceableBusDeferralNotificationEvent";
 
-    public ServiceablePublisher(IServiceableBusClientFactory clientFactory, IEnumerable<IServiceablePublisherOptions> options)
+    private readonly IServiceableBusClientFactory _clientFactory;
+    private readonly IEnumerable<IServiceablePublisherOptions> _publisherOptions;
+    private readonly ServiceableBusOptions _serviceableBusOptions;
+
+    public ServiceablePublisher(
+        IServiceableBusClientFactory clientFactory, 
+        IEnumerable<IServiceablePublisherOptions> publisherOptions,
+        IOptions<ServiceableBusOptions> serviceableBusOptions)
     {
         _clientFactory = clientFactory;
-        _options = options;
+        _publisherOptions = publisherOptions;
+        _serviceableBusOptions = serviceableBusOptions.Value;
     }
 
     public async Task PublishAsync<T>(T message, Func<ServiceablePropertyBag>? action = null) where T : IServiceableBusEvent
     {
-        var messageOptions = _options.FirstOrDefault(x => x.MessageType == typeof(T));
+        var messageOptions = _publisherOptions.FirstOrDefault(x => x.MessageType == typeof(T));
 
         if (messageOptions is null)
             throw new InvalidOperationException($"No publisher options found for message type {typeof(T).Name}.");
@@ -55,5 +64,22 @@ internal class ServiceablePublisher : IServiceablePublisher
         }
 
         await sender.SendMessageAsync(sbMessage);
+    }
+
+    public async Task PublishDeferralNotification(int sequenceNumber)
+    {
+        if (_serviceableBusOptions is null || string.IsNullOrWhiteSpace(_serviceableBusOptions.DeferralNotificationQueueName))
+            throw new InvalidOperationException($"No publisher options found for Deferral Notifications.");
+
+        var sender = _clientFactory.CreateDeferralNotificationSender(_serviceableBusOptions);
+
+        var notificationMessage = new ServiceBusMessage()
+        {
+            Body = new BinaryData(Encoding.UTF8.GetBytes(sequenceNumber.ToString())),
+            ContentType = "application/json",
+            CorrelationId = Guid.NewGuid().ToString(),
+        };
+
+        await sender.SendMessageAsync(notificationMessage);
     }
 }
