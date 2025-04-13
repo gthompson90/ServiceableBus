@@ -1,10 +1,11 @@
 ﻿using ServiceableBus.Contracts;
+using ServiceableBus.Contracts.Results;
 
 namespace ServiceableBus.Sample.Api;
 
-public class TestEventServiceBusHandler : IServiceableBusEventHandler<TestEvent>
+public class TestQueueEventServiceBusHandler : IServiceableBusEventHandler<TestQueueEvent>
 {
-    public Task Handle(TestEvent @event, ServiceablePropertyBag properties)
+    public Task<IServiceableResult> Handle(TestQueueEvent @event, ServiceablePropertyBag properties)
     {
         Console.WriteLine($"Handling event {@event.MessageTypeName} with payload {@event.Payload}");
 
@@ -13,6 +14,6 @@ public class TestEventServiceBusHandler : IServiceableBusEventHandler<TestEvent>
             Console.WriteLine($"Property: {property.Key} = {property.Value}");
         }
 
-        return Task.CompletedTask;
+        return Task.FromResult<IServiceableResult>(ServiceableResult.Defer(1));
     }
 }

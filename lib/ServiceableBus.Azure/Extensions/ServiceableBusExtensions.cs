@@ -50,4 +50,19 @@ public static class ServiceableBusExtensions
         builder.Services.AddSingleton<IServiceablePublisherOptions>(sp => new ServiceablePublisherOptions(queueOrTopicName, typeof(T)));
         return builder;
     }
+
+    public static WebApplicationBuilder AddServiceableBusDeferrals(this WebApplicationBuilder builder)
+    {
+        var config = builder.Configuration.GetSection("ServiceableBus");
+
+        if (string.IsNullOrWhiteSpace(config["DeferralNotificationQueueName"]))
+        {
+            throw new InvalidOperationException("DeferralNotificationQueueName is not configured.");
+        }
+
+        builder.Services.AddSingleton<IServiceableDeferralNotificationPublisher, ServiceableDeferralNotificationPublisher>();
+        builder.Services.AddSingleton<IServiceableDeferralNotificationListener, ServiceableDeferralNotificationListener>();
+
+        return builder;
+    }
 }

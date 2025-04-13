@@ -105,7 +105,7 @@ namespace ServiceableBus.Azure.Tests
         }
 
         [TestMethod]
-        public void Dispose_ShouldDisposeProcessor()
+        public async Task Dispose_ShouldDisposeProcessor()
         {
             // Arrange
             var mockProcessor = Substitute.For<ServiceBusProcessor>();
@@ -114,10 +114,10 @@ namespace ServiceableBus.Azure.Tests
             _listener.StartProcessor(_mockClient, CancellationToken.None).Wait();
 
             // Act
-            _listener.Dispose();
+            await _listener.DisposeAsync();
 
             // Assert
-            mockProcessor.Received(1).DisposeAsync();
+            await mockProcessor.Received(1).DisposeAsync();
         }
     }
 }

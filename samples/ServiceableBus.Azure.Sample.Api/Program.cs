@@ -15,9 +15,9 @@ builder.Services.AddOptions();
 
 //Add your Listeners and Handlers here BEFORE adding the ServiceableBus.
 builder.AddServiceableBusQueueListener(() =>
-    new ServiceableQueueListenerOptions<TestEvent>()
+    new ServiceableQueueListenerOptions<TestQueueEvent>()
     {
-        QueueName = TestEvent.Queue
+        QueueName = TestQueueEvent.Queue
     });
 
 //builder.AddServiceableBusTopicListener(() =>
@@ -27,12 +27,14 @@ builder.AddServiceableBusQueueListener(() =>
 //        TopicName = TestTopicEvent.Topic
 //    });
 
-builder.RegisterServiceableBusHandler<TestEvent, TestEventServiceBusHandler>();
+builder.RegisterServiceableBusHandler<TestQueueEvent, TestQueueEventServiceBusHandler>();
 builder.RegisterServiceableBusHandler<TestTopicEvent, TestTopicEventServiceBusHandler>();
 
 //Add your Event Senders here BEFORE adding the ServiceableBus.
-builder.AddServiceableBusEventSender<TestEvent>(TestEvent.Queue);
+builder.AddServiceableBusEventSender<TestQueueEvent>(TestQueueEvent.Queue);
 builder.AddServiceableBusEventSender<TestTopicEvent>(TestTopicEvent.Topic);
+
+builder.AddServiceableBusDeferrals();
 
 builder.AddServiceableBus();
 

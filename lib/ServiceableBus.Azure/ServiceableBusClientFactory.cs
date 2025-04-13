@@ -24,4 +24,13 @@ internal class ServiceableBusClientFactory : IServiceableBusClientFactory
         var sender = _client.CreateSender(options.QueueOrTopicName);
         return sender;
     }
+
+    public ServiceBusSender CreateDeferralNotificationSender(ServiceableBusOptions options)
+    {
+        if (options is null)
+            throw new ArgumentNullException(nameof(options));
+
+        var sender = _client.CreateSender(options.DeferralNotificationQueueName);
+        return sender;
+    }
 }

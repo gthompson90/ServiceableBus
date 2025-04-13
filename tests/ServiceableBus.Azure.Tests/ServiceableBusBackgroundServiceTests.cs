@@ -10,6 +10,7 @@ namespace ServiceableBus.Azure.Tests
     public class ServiceableBusBackgroundServiceTests
     {
         private ServiceableBusBackgroundService _backgroundService;
+        private IServiceProvider _mockServiceProvider;
         private IOptions<ServiceableBusOptions> _mockOptions;
         private List<IServiceableListener> _mockListeners;
 
@@ -17,6 +18,7 @@ namespace ServiceableBus.Azure.Tests
         public void Setup()
         {
             _mockOptions = Substitute.For<IOptions<ServiceableBusOptions>>();
+            _mockServiceProvider = Substitute.For<IServiceProvider>();
             _mockOptions.Value.Returns(new ServiceableBusOptions { ConnectionString = "Endpoint=sb://test.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=testkey" });
 
             _mockListeners = new List<IServiceableListener>
@@ -25,7 +27,7 @@ namespace ServiceableBus.Azure.Tests
                 Substitute.For<IServiceableListener>()
             };
 
-            _backgroundService = new ServiceableBusBackgroundService(_mockOptions, _mockListeners);
+            _backgroundService = new ServiceableBusBackgroundService(_mockServiceProvider, _mockOptions, _mockListeners);
         }
 
         [TestMethod]
@@ -57,7 +59,7 @@ namespace ServiceableBus.Azure.Tests
             foreach (var listener in _mockListeners)
             {
                 await listener.Received(1).StopProcessor(cancellationToken);
-                listener.Received(1).Dispose();
+                await listener.Received(1).DisposeAsync();
             }
         }
 
@@ -70,7 +72,7 @@ namespace ServiceableBus.Azure.Tests
             // Assert
             foreach (var listener in _mockListeners)
             {
-                listener.Received(1).Dispose();
+                await listener.Received(1).DisposeAsync();
             }
         }
     }
