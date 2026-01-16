@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceableBus.Aws", "lib\S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceableBus.Aws.Sample.Api", "samples\ServiceableBus.Aws.Sample.Api\ServiceableBus.Aws.Sample.Api.csproj", "{4G9C6D3E-9F5G-5B3C-0D4E-2F6G7A8B9C0E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceableBus.Aws.Tests", "tests\ServiceableBus.Aws.Tests\ServiceableBus.Aws.Tests.csproj", "{5H0D7E4F-0G6H-6C4D-1E5F-3G7H8A9B0C1F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{4G9C6D3E-9F5G-5B3C-0D4E-2F6G7A8B9C0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4G9C6D3E-9F5G-5B3C-0D4E-2F6G7A8B9C0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4G9C6D3E-9F5G-5B3C-0D4E-2F6G7A8B9C0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5H0D7E4F-0G6H-6C4D-1E5F-3G7H8A9B0C1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5H0D7E4F-0G6H-6C4D-1E5F-3G7H8A9B0C1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5H0D7E4F-0G6H-6C4D-1E5F-3G7H8A9B0C1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5H0D7E4F-0G6H-6C4D-1E5F-3G7H8A9B0C1F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,5 +70,6 @@ Global
 		{B36A9563-9598-44B6-B7A9-D8A1075D118A} = {6E273594-0982-475E-93DE-10A0BB019DB1}
 		{4G9C6D3E-9F5G-5B3C-0D4E-2F6G7A8B9C0E} = {6E273594-0982-475E-93DE-10A0BB019DB1}
 		{88576F0E-56E0-49B6-A4C3-5F914DCA0BFB} = {D4FC2380-0138-4B42-B3EF-C741FCFA0E75}
+		{5H0D7E4F-0G6H-6C4D-1E5F-3G7H8A9B0C1F} = {D4FC2380-0138-4B42-B3EF-C741FCFA0E75}
 	EndGlobalSection
 EndGlobal
