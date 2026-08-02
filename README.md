@@ -1,175 +1,152 @@
 # ServiceableBus
 
-ServiceableBus is a .NET library for handling Azure Service Bus messages with ease. This guide will help you set up and use the ServiceableBus package in your project.
+ServiceableBus is a .NET 9 library for publishing and handling Azure Service Bus messages with typed events, handlers, and DI registration.
+
+## Documentation
+
+See [`/docs`](./docs/README.md) for architecture, getting started, publishing, receiving, and internal engineering review notes.
 
 ## Prerequisites
 
 - .NET 9
-- Azure Service Bus namespace and connection string
+- An Azure Service Bus namespace and connection string
 
 ## Installation
 
-1. Add the `ServiceableBus` package to your project. You can do this via the NuGet Package Manager or by running the following command in the terminal:
+```bash
+dotnet add package ServiceableBus.Azure
+dotnet add package ServiceableBus.Contracts
+```
 
-```
-dotnet add package ServiceableBus
-```
-
-    
-2. Ensure you have the necessary dependencies in your project:
-
-```
-dotnet add package Azure.Messaging.ServiceBus
-dotnet add package Microsoft.Extensions.DependencyInjection
-```
+`Azure.Messaging.ServiceBus` is brought in by `ServiceableBus.Azure`.
 
 ## Configuration
 
-1. Add the necessary configuration settings to your `appsettings.json` file:
-```
+Add settings to `appsettings.json` (prefer user secrets or environment variables for real credentials):
+
+```json
 {
   "ServiceableBus": {
     "ConnectionString": "YourAzureServiceBusConnectionString"
   }
 }
 ```
-2. Create your event class implementing `IServiceableBusEvent`:
-```
-public class TestEvent : IServiceableBusEvent
+
+### Event
+
+```csharp
+using ServiceableBus.Azure;
+using ServiceableBus.Contracts;
+
+public class TestEvent : ServiceableBusEvent<TestEvent.TestEventPayload>
 {
-    public const string Topic = "test-topic";
-    public string Property { get; set; }
+    public const string Queue = "test-event";
+
+    public record TestEventPayload(string Field1, int Field2, int Field3) : IServiceableBusPayload;
 }
 ```
-3. Create your event handler class implementing `IServiceableBusEventHandler<T>`:
-```
+
+### Handler
+
+```csharp
+using ServiceableBus.Contracts;
+
 public class TestEventServiceBusHandler : IServiceableBusEventHandler<TestEvent>
 {
-    public Task Handle(TestEvent @event)
+    public Task Handle(TestEvent @event, ServiceablePropertyBag properties)
     {
-        Console.WriteLine($"Handling event: {@event.Property}");
+        Console.WriteLine($"Handling event: {@event.Payload}");
         return Task.CompletedTask;
     }
 }
 ```
+
 ## Usage
 
-1. In your `Program.cs` file, configure the `ServiceableBus`:
-```
-using ServiceableBus.Extensions;
-using ServiceableBus.Sample.Api;
+Register listeners, handlers, and senders **before** `AddServiceableBus()`.
+
+```csharp
+using ServiceableBus.Azure.Abstractions;
+using ServiceableBus.Azure.Extensions;
+using ServiceableBus.Azure.Options;
+using ServiceableBus.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
-
-// Adding options is required for the ServiceableBus configuration.
 builder.Services.AddOptions();
 
-//Add your Listeners and Handlers here BEFORE adding the ServiceableBus.
 builder.AddServiceableBusQueueListener(() =>
-    new ServiceableQueueListenerOptions<TestEvent>()
-    { 
-        QueueName = TestEvent.Queue 
+    new ServiceableQueueListenerOptions<TestEvent>
+    {
+        QueueName = TestEvent.Queue
     });
 
 builder.AddServiceableBusTopicListener(() =>
-    new ServiceableTopicListenerOptions<TestTopicEvent>()
-    { 
-        SubscriptionName =  appTopicSubscriptionName,
-        TopicName = TestTopicEvent.Topic
+    new ServiceableTopicListenerOptions<TestTopicEvent>
+    {
+        TopicName = TestTopicEvent.Topic,
+        SubscriptionName = "your-subscription-name"
     });
 
 builder.RegisterServiceableBusHandler<TestEvent, TestEventServiceBusHandler>();
 builder.RegisterServiceableBusHandler<TestTopicEvent, TestTopicEventServiceBusHandler>();
 
+builder.AddServiceableBusEventSender<TestEvent>(TestEvent.Queue);
+builder.AddServiceableBusEventSender<TestTopicEvent>(TestTopicEvent.Topic);
+
 builder.AddServiceableBus();
 
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
 app.Run();
 ```
-2. Run your application:
-```
-dotnet run
-```
 
-3. Adding a Sender for TestEvent and sending a message:
-```
-using ServiceableBus.Extensions;
-using ServiceableBus.Sample.Api;
+### Publishing
 
-var builder = WebApplication.CreateBuilder(args);
+Resolve `IServiceablePublisher` and call `PublishAsync`. The public interface requires a `ServiceablePropertyBag` factory (use an empty bag if you have no application properties):
 
-builder.Services.AddOpenApi();
+```csharp
+var sender = app.Services.GetRequiredService<IServiceablePublisher>();
 
-// Adding options is required for the ServiceableBus configuration.
-builder.Services.AddOptions();
-
-// Add your Listeners, Handlers and Senders here BEFORE adding the ServiceableBus.
-builder.AddServiceableBusQueueListener(() =>
-    new ServiceableQueueListenerOptions<TestEvent>()
-    { 
-        QueueName = TestEvent.Queue 
+await sender.PublishAsync(
+    new TestEvent
+    {
+        MessageTypeName = "TestEvent",
+        CreatedAt = DateTime.UtcNow,
+        Payload = new TestEvent.TestEventPayload("Test", 1, 4)
+    },
+    () => new ServiceablePropertyBag
+    {
+        Properties =
+        [
+            ("AppName", "TestApp"),
+            ("AnotherProperty", "WhateverValueYouLike")
+        ]
     });
-
-builder.RegisterServiceableBusHandler<TestEvent, TestEventServiceBusHandler>();
-
-builder.AddServiceableBusEventSender<TestEvent>(TestEvent.Topic);
-
-builder.AddServiceableBus();
-
-var app = builder.Build();
-
-//Test fire the sender by getting the IServiceableBusPublisher and calling PublishAsync.
-var sender = app.Services.GetService<IServiceableBusPublisher>();
-
-await sender.PublishAsync(new TestEvent 
-{ 
-    MessageTypeName = "TestEvent",
-    Payload = new TestEvent.TestEventPayload("Test", 1, 4) 
-});
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-app.Run();
 ```
-
 
 ## ServiceablePropertyBag
 
-The `ServiceablePropertyBag` class is used to store and manage a collection of key-value pairs. It provides a convenient way to pass additional properties along with your events.
+`ServiceablePropertyBag` holds application properties sent with the Service Bus message and reconstituted on receive.
 
-### Example Usage
+```csharp
+var propertyBag = new ServiceablePropertyBag
+{
+    Properties =
+    [
+        ("Property1", "Value1"),
+        ("Property2", 123),
+        ("Property3", true)
+    ]
+};
 
-1. Define a `ServiceablePropertyBag` with properties:
-```
-var propertyBag = new ServiceablePropertyBag { Properties =[("Property1", "Value1"), ("Property2", 123), ("Property3", true)]};
-```
-2. Use the `ServiceablePropertyBag` when publishing an event:
-```
-await sender.PublishAsync(new TestEvent 
-{ 
-    MessageTypeName = "TestEvent", 
-    Payload = new TestEvent.TestEventPayload("Test", 1, 4) 
-},
-() => propertyBag);
+await sender.PublishAsync(message, () => propertyBag);
 ```
 
-## Additional Information
+## Additional information
 
-- Ensure that your Azure Service Bus connection string and other settings are correctly configured in the `appsettings.json` file.
-- You can add multiple listeners and handlers as needed by following the pattern shown above.
+- Set `ServiceableBus:ConnectionString` correctly before running listeners or publishers.
+- You can register multiple listeners and handlers using the same pattern.
+- A runnable sample is under `samples/ServiceableBus.Azure.Sample.Api`.
 
 ## License
 
@@ -177,8 +154,8 @@ This project is licensed under the MIT License.
 
 ## Contributing
 
-Contributions are welcome! Please open an issue or submit a pull request.
+Contributions are welcome. Please open an issue or submit a pull request.
 
 ## Contact
 
-For any questions or issues, please open an issue on the GitHub repository.
+For questions or issues, open an issue on the GitHub repository.
